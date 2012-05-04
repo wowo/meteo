@@ -2,7 +2,6 @@ import static org.junit.Assert.*;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
@@ -29,6 +28,16 @@ public class CityFetcherTest {
 			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"));
 			ArrayList<City> cities = fetcher.fetch();
 			assertTrue(cities.size() > 0);
+			
+			City orzesze = new City(797, "Orzesze, pow. mikołowski");
+			boolean hasOrzesze = false;
+			for (City city : cities) {
+				if (city.id == orzesze.id && city.name.equals(orzesze.name)) {
+					hasOrzesze = true;
+					break;
+				}
+			}
+			assertTrue(hasOrzesze);
 		} catch (MalformedURLException e) {
 			fail(e.getClass().toString());
 		} catch (Exception e) {
