@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import pl.sznapka.meteo.fetcher.CityFetcher;
+import pl.sznapka.meteo.fetcher.HttpClient;
 import pl.sznapka.meteo.valueobject.City;
 import pl.sznapka.meteo.valueobject.State;
 
@@ -15,8 +16,7 @@ public class CityFetcherTest {
 	@Test
 	public void testCityFetcher() {
 		try {
-			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"));
-			assertEquals("SL", fetcher.getState().symbol);
+			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"), new HttpClient());
 		} catch (MalformedURLException e) {
 			fail(e.getClass().toString());
 		}
@@ -25,7 +25,7 @@ public class CityFetcherTest {
 	@Test
 	public void testFetch() throws MalformedURLException {
 		try {
-			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"));
+			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"), new HttpClient());
 			ArrayList<City> cities = fetcher.fetch();
 			assertTrue(cities.size() > 0);
 			

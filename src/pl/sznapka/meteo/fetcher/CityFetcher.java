@@ -16,53 +16,27 @@ import pl.sznapka.meteo.valueobject.State;
 public class CityFetcher implements IFetcher {
 	
 	protected State state;
-	protected URL url;
+	protected HttpClient client;
 	
-	public static final String CITIES_REGEX = "show_mgram\\(([0-9]+)\\)'>([^<]+)<";
-	
-	public CityFetcher(State state) throws MalformedURLException {
+	public CityFetcher(State state, HttpClient client) throws MalformedURLException {
 		
 		this.state = state;
-		this.url = new URL("http://new.meteo.pl/um/php/gpp/next.php");
-	}
-	
-	public State getState() {
-		return state;
+		this.client = client;
 	}
 	
 	@Override
-	public ArrayList<City> fetch() throws Exception {
-		
-		return parseCities(getContent());
-
-	}
-	
-	protected String getContent() throws Exception {
+	public ArrayList<City> fetch() throws FetcherException {
 		
 		try {
-			URLConnection conn = url.openConnection();
-			conn.setDoOutput(true);
-			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-			writer.write("litera=&woj=" + state.symbol);
-			writer.flush();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "ISO8859_2"));
-			String line;
-			String content = "";
-			while ((line = reader.readLine()) != null) {
-				content += line;
-			}
-			writer.close();
-			reader.close();
-			return content;
-		} catch (java.lang.Exception ex) {
-			throw new Exception("An exception occured while getting content from URL");
-		}	
+			return parseCities(client.makePostRequest(new URL("http://new.meteo.pl/um/php/gpp/next.php"), "litera=&woj=" + state.symbol));
+		} catch (MalformedURLException e) {
+			throw new FetcherException("Malformed url");
+		}
 	}
 	
 	protected ArrayList<City> parseCities(String content) {
 		
-		Matcher matcher = Pattern.compile(CITIES_REGEX).matcher(content);
+		Matcher matcher = Pattern.compile("show_mgram\\(([0-9]+)\\)'>([^<]+)<").matcher(content);
 		ArrayList<City> cities = new ArrayList<City>();
 		while (matcher.find()) {
 			cities.add(new City(Integer.parseInt(matcher.group(1)), matcher.group(2)));
