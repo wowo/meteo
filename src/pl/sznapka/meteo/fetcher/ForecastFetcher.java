@@ -33,8 +33,11 @@ public class ForecastFetcher implements IFetcher {
 			url += "&row=" + getMeteogramParam(content, "act_y") + "&col="  + getMeteogramParam(content, "act_x");
 			System.out.println("Meteogram url: " + url);
 
-			client.downloadFile(new URL(url), "/tmp/meteo-" + city.id + "-" + date + ".png");
-			return null;
+			ArrayList<String> result= new ArrayList();
+			result.add(System.getProperty("java.io.tmpdir") + "/meteo-" + city.id + "-" + date + ".png");
+			client.downloadFile(new URL(url), result.get(0));
+
+			return result;
 		} catch (MalformedURLException e) {
 			throw new FetcherException("Malformed url");
 		} catch (IOException e) {
