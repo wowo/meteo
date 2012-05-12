@@ -16,7 +16,7 @@ public class CityFetcherTest {
 	@Test
 	public void testCityFetcher() {
 		try {
-			CityFetcher fetcher = new CityFetcher(new State("śląskie", "SL"), new HttpClient());
+			new CityFetcher(new State("śląskie", "SL"), new HttpClient());
 		} catch (MalformedURLException e) {
 			fail(e.getClass().toString());
 		}

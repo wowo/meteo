@@ -1,7 +1,5 @@
 package pl.sznapka.meteo.fetcher;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +21,7 @@ public class ForecastFetcher implements IFetcher {
 		this.client = client;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List fetch() throws FetcherException {
 		
@@ -33,7 +32,7 @@ public class ForecastFetcher implements IFetcher {
 			url += "&row=" + getMeteogramParam(content, "act_y") + "&col="  + getMeteogramParam(content, "act_x");
 			System.out.println("Meteogram url: " + url);
 
-			ArrayList<String> result= new ArrayList();
+			ArrayList<String> result= new ArrayList<String>();
 			result.add(System.getProperty("java.io.tmpdir") + "/meteo-" + city.id + "-" + date + ".png");
 			client.downloadFile(new URL(url), result.get(0));
 
@@ -48,7 +47,6 @@ public class ForecastFetcher implements IFetcher {
 	protected String getMeteogramParam(String content, String name) {
 		
 		Matcher matcher = Pattern.compile(name + " = \"?([^\";]+)\"?;").matcher(content);
-		
 		while (matcher.find()) {
 			return matcher.group(1);
 		}
