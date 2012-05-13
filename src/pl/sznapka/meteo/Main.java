@@ -1,6 +1,5 @@
 package pl.sznapka.meteo;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,7 +24,7 @@ public class Main {
 		System.out.println("Fetched img: " + path);
 
 		Processor processor = new Processor();
-		HashMap<String, File> diagrams = processor.extractDiagrams(path, path.substring(0, path.length() - 4) + "-");
+		HashMap<String, String> diagrams = processor.extractDiagrams(path, path.substring(0, path.length() - 4) + "-");
 		for (String key : diagrams.keySet()) {
 			System.out.println(key + ":\t" + diagrams.get(key));
 		}

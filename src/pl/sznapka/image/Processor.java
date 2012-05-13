@@ -3,14 +3,13 @@
  */
 package pl.sznapka.image;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-
-import javax.imageio.ImageIO;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 
 /**
  * Meteograms processor
@@ -44,23 +43,24 @@ public class Processor {
 	 * @return HashMap where keys are types of diagrams and values are files where diagrams are located
 	 * @throws ImageProcessingException
 	 */
-	public HashMap<String, File> extractDiagrams(String source, String destinationPrefix) throws ImageProcessingException {
+	public HashMap<String, String> extractDiagrams(String source, String destinationPrefix) throws ImageProcessingException {
 		
 		try {
-			BufferedImage img = ImageIO.read(new File(source));
-			HashMap<String, BufferedImage> diagrams = new HashMap<String, BufferedImage>();
-			diagrams.put("temperature", img.getSubimage(DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("rain", 		img.getSubimage(DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("pressure",	img.getSubimage(DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("wind", 		img.getSubimage(DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("visibility",  img.getSubimage(DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("clouds", 	    img.getSubimage(DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			Bitmap img = BitmapFactory.decodeFile(source);
+			HashMap<String, Bitmap> diagrams = new HashMap<String, Bitmap>();
+			diagrams.put("temperature", Bitmap.createBitmap(img, DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put("rain", 		Bitmap.createBitmap(img, DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put("pressure",	Bitmap.createBitmap(img, DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put("wind", 		Bitmap.createBitmap(img, DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put("visibility",  Bitmap.createBitmap(img, DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put("clouds", 	    Bitmap.createBitmap(img, DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
 
-			HashMap<String, File> output = new HashMap<String, File> ();
+			HashMap<String, String> output = new HashMap<String, String> ();
 			for (String key : diagrams.keySet()) {
-				File file = new File(destinationPrefix + key + ".png");
-				ImageIO.write(mergeWithLegend(img, diagrams.get(key)), "png", file);
-				output.put(key, file);
+				String path = destinationPrefix + key + ".png";
+				FileOutputStream out = new FileOutputStream(path);
+				mergeWithLegend(img, diagrams.get(key)).compress(Bitmap.CompressFormat.PNG,	100, out);
+				output.put(key, path);
 			}
 
 			return output;
@@ -76,17 +76,16 @@ public class Processor {
 	 * @param input
 	 * @return image with legend
 	 */
-	protected BufferedImage mergeWithLegend(BufferedImage original, BufferedImage input) {
+	protected Bitmap mergeWithLegend(Bitmap original, Bitmap input) {
 
-		BufferedImage legend = original.getSubimage(LEGEND_X, LEGEND_Y, LEGEND_WIDTH, LEGEND_HEIGHT);
-		BufferedImage combined = new BufferedImage(DIAGRAM_WIDTH, LEGEND_HEIGHT + DIAGRAM_HEIGHT, BufferedImage.TYPE_INT_RGB);
+		Bitmap legend = Bitmap.createBitmap(original, LEGEND_X, LEGEND_Y, LEGEND_WIDTH, LEGEND_HEIGHT);
+		Bitmap combined = Bitmap.createBitmap(DIAGRAM_WIDTH, LEGEND_HEIGHT + DIAGRAM_HEIGHT, Config.RGB_565);
 
-		Graphics g = combined.getGraphics();
-		g.setColor(new Color(255, 251, 240));
-		g.fillRect(0, 0, combined.getWidth(), combined.getHeight());
-		g.drawImage(legend, LEGEND_X - DIAGRAM_X, 0, null);
-		g.drawImage(input, 0, LEGEND_HEIGHT, null);
-
+		Canvas canvas = new Canvas(combined);
+		canvas.drawRGB(255, 251, 240);
+		canvas.drawBitmap(legend, LEGEND_X - DIAGRAM_X, 0, null);
+		canvas.drawBitmap(input, 0, LEGEND_HEIGHT, null);
+		
 		return combined;
 	}
 }
