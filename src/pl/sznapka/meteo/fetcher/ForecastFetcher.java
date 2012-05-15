@@ -1,13 +1,13 @@
 package pl.sznapka.meteo.fetcher;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import pl.sznapka.http.client.HttpClient;
+import pl.sznapka.http.client.HttpClientException;
 import pl.sznapka.meteo.valueobject.City;
 
 public class ForecastFetcher implements IFetcher {
@@ -39,8 +39,8 @@ public class ForecastFetcher implements IFetcher {
 			return result;
 		} catch (MalformedURLException e) {
 			throw new FetcherException("Malformed url");
-		} catch (IOException e) {
-			throw new FetcherException("IOException: " + e.getMessage());
+		} catch (HttpClientException e) {
+			throw new FetcherException("HTTP problem occured: " + e.getMessage());
 		}
 	}
 

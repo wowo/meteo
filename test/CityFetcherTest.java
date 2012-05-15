@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import pl.sznapka.http.client.HttpClient;
 import pl.sznapka.meteo.fetcher.CityFetcher;
-import pl.sznapka.meteo.fetcher.HttpClient;
 import pl.sznapka.meteo.valueobject.City;
 import pl.sznapka.meteo.valueobject.State;
 
@@ -15,11 +15,7 @@ public class CityFetcherTest {
 
 	@Test
 	public void testCityFetcher() {
-		try {
-			new CityFetcher(new State("śląskie", "SL"), new HttpClient());
-		} catch (MalformedURLException e) {
-			fail(e.getClass().toString());
-		}
+		new CityFetcher(new State("śląskie", "SL"), new HttpClient());
 	}
 
 	@Test
@@ -38,8 +34,6 @@ public class CityFetcherTest {
 				}
 			}
 			assertTrue(hasOrzesze);
-		} catch (MalformedURLException e) {
-			fail(e.getClass().toString());
 		} catch (Exception e) {
 			fail(e.getClass().toString());
 		}

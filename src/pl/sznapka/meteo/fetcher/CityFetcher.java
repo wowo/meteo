@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pl.sznapka.http.client.HttpClient;
+import pl.sznapka.http.client.HttpClientException;
 import pl.sznapka.meteo.valueobject.City;
 import pl.sznapka.meteo.valueobject.State;
 
@@ -14,7 +16,7 @@ public class CityFetcher implements IFetcher {
 	protected State state;
 	protected HttpClient client;
 	
-	public CityFetcher(State state, HttpClient client) throws MalformedURLException {
+	public CityFetcher(State state, HttpClient client) {
 		
 		this.state = state;
 		this.client = client;
@@ -27,6 +29,8 @@ public class CityFetcher implements IFetcher {
 			return parseCities(client.makePostRequest(new URL("http://new.meteo.pl/um/php/gpp/next.php"), "litera=&woj=" + state.symbol));
 		} catch (MalformedURLException e) {
 			throw new FetcherException("Malformed url");
+		} catch (HttpClientException e) {
+			throw new FetcherException("HTTP problem occured: " + e.getMessage());
 		}
 	}
 	
