@@ -1,4 +1,4 @@
-package pl.sznapka.http.client;
+package pl.sznapka.meteo.http;
 
 public class HttpClientException extends java.lang.Exception {
 

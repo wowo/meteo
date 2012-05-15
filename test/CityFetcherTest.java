@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import pl.sznapka.http.client.HttpClient;
 import pl.sznapka.meteo.fetcher.CityFetcher;
+import pl.sznapka.meteo.http.HttpClient;
 import pl.sznapka.meteo.valueobject.City;
 import pl.sznapka.meteo.valueobject.State;
 

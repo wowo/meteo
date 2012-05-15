@@ -3,9 +3,9 @@ package pl.sznapka.meteo;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import pl.sznapka.http.client.HttpClient;
-import pl.sznapka.image.Processor;
 import pl.sznapka.meteo.fetcher.ForecastFetcher;
+import pl.sznapka.meteo.http.HttpClient;
+import pl.sznapka.meteo.image.Processor;
 import pl.sznapka.meteo.valueobject.City;
 
 public class Main {

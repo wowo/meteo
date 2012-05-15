@@ -1,4 +1,4 @@
-package pl.sznapka.http.client;
+package pl.sznapka.meteo.http;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

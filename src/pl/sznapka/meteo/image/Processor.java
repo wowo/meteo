@@ -1,7 +1,7 @@
 /**
  * 
  */
-package pl.sznapka.image;
+package pl.sznapka.meteo.image;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

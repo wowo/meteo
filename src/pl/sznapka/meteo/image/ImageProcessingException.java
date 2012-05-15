@@ -1,4 +1,4 @@
-package pl.sznapka.image;
+package pl.sznapka.meteo.image;
 
 public class ImageProcessingException extends Exception {
 	

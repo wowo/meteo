@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pl.sznapka.http.client.HttpClient;
-import pl.sznapka.http.client.HttpClientException;
+import pl.sznapka.meteo.http.HttpClient;
+import pl.sznapka.meteo.http.HttpClientException;
 import pl.sznapka.meteo.valueobject.City;
 import pl.sznapka.meteo.valueobject.State;
 
