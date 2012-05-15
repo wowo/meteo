@@ -6,6 +6,8 @@ package pl.sznapka.meteo.image;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+
+import pl.sznapka.meteo.valueobject.Forecast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
@@ -43,21 +45,22 @@ public class Processor {
 	 * @return HashMap where keys are types of diagrams and values are files where diagrams are located
 	 * @throws ImageProcessingException
 	 */
-	public HashMap<String, String> extractDiagrams(String source, String destinationPrefix) throws ImageProcessingException {
+	public HashMap<String, String> extractDiagrams(Forecast forecast) throws ImageProcessingException {
 		
 		try {
-			Bitmap img = BitmapFactory.decodeFile(source);
+			Bitmap img = BitmapFactory.decodeFile(forecast.path);
 			HashMap<String, Bitmap> diagrams = new HashMap<String, Bitmap>();
-			diagrams.put("temperature", Bitmap.createBitmap(img, DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("rain", 		Bitmap.createBitmap(img, DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("pressure",	Bitmap.createBitmap(img, DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("wind", 		Bitmap.createBitmap(img, DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("visibility",  Bitmap.createBitmap(img, DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put("clouds", 	    Bitmap.createBitmap(img, DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.TEMPERATURE, Bitmap.createBitmap(img, DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.RAIN,        Bitmap.createBitmap(img, DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.PRESSURE,	   Bitmap.createBitmap(img, DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.WIND,        Bitmap.createBitmap(img, DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.VISIBILITY,  Bitmap.createBitmap(img, DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			diagrams.put(Forecast.CLOUDS,      Bitmap.createBitmap(img, DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
 
 			HashMap<String, String> output = new HashMap<String, String> ();
+			String prefix = forecast.path.substring(0, forecast.path.length() - 4) + "-";
 			for (String key : diagrams.keySet()) {
-				String path = destinationPrefix + key + ".png";
+				String path = prefix + key + ".png";
 				FileOutputStream out = new FileOutputStream(path);
 				mergeWithLegend(img, diagrams.get(key)).compress(Bitmap.CompressFormat.PNG,	100, out);
 				output.put(key, path);
