@@ -1,6 +1,10 @@
 package pl.sznapka.meteo.valueobject;
 
-public class State {
+import java.io.Serializable;
+
+public class State implements Serializable {
+
+	private static final long serialVersionUID = -3885313250040639137L;
 	public String name;
 	public String symbol;
 	

@@ -1,6 +1,10 @@
 package pl.sznapka.meteo.valueobject;
 
-public class Forecast {
+import java.io.Serializable;
+
+public class Forecast implements Serializable {
+
+	private static final long serialVersionUID = 9130168353914258994L;
 	public String url;
 	public City city;
 	public String path;

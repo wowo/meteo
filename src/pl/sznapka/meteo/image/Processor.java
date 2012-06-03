@@ -5,7 +5,9 @@ package pl.sznapka.meteo.image;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import pl.sznapka.meteo.valueobject.Forecast;
 import android.graphics.Bitmap;
@@ -37,25 +39,39 @@ public class Processor {
 
 	
 	/**
-	 * Extracts 6 diagrams from meteogram fetched from new.meteo.pl/um
+	 * Extracts chosen diagrams from meteogram fetched from new.meteo.pl/um
 	 * For every diagram it adds the legend with time (in CEST)
 	 * 
-	 * @param source
-	 * @param destinationPrefix
+	 * @param forecast
+	 * @param types
 	 * @return HashMap where keys are types of diagrams and values are files where diagrams are located
 	 * @throws ImageProcessingException
 	 */
-	public HashMap<String, String> extractDiagrams(Forecast forecast) throws ImageProcessingException {
+	public HashMap<String, String> extractDiagrams(Forecast forecast, List<String> types) throws ImageProcessingException {
 		
 		try {
+			System.out.println("Extracting diagrams for city: " + forecast.city.name
+					+ " path: " + forecast.path);
 			Bitmap img = BitmapFactory.decodeFile(forecast.path);
 			HashMap<String, Bitmap> diagrams = new HashMap<String, Bitmap>();
-			diagrams.put(Forecast.TEMPERATURE, Bitmap.createBitmap(img, DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put(Forecast.RAIN,        Bitmap.createBitmap(img, DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put(Forecast.PRESSURE,	   Bitmap.createBitmap(img, DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put(Forecast.WIND,        Bitmap.createBitmap(img, DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put(Forecast.VISIBILITY,  Bitmap.createBitmap(img, DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
-			diagrams.put(Forecast.CLOUDS,      Bitmap.createBitmap(img, DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			if (types.contains(Forecast.TEMPERATURE)) {
+				diagrams.put(Forecast.TEMPERATURE, Bitmap.createBitmap(img, DIAGRAM_X, TEMPERATURE_Y, DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
+			if (types.contains(Forecast.RAIN)) {
+				diagrams.put(Forecast.RAIN, Bitmap.createBitmap(img, DIAGRAM_X, RAIN_Y, 		  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
+			if (types.contains(Forecast.PRESSURE)) {
+				diagrams.put(Forecast.PRESSURE, Bitmap.createBitmap(img, DIAGRAM_X, PRESSURE_Y, 	  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
+			if (types.contains(Forecast.WIND)) {
+				diagrams.put(Forecast.WIND, Bitmap.createBitmap(img, DIAGRAM_X, WIND_Y,        DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
+			if (types.contains(Forecast.VISIBILITY)) {
+				diagrams.put(Forecast.VISIBILITY, Bitmap.createBitmap(img, DIAGRAM_X, VISIBILITY_Y,  DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
+			if (types.contains(Forecast.CLOUDS)) {
+				diagrams.put(Forecast.CLOUDS, Bitmap.createBitmap(img, DIAGRAM_X, CLOUDS_Y,      DIAGRAM_WIDTH, DIAGRAM_HEIGHT));
+			}
 
 			HashMap<String, String> output = new HashMap<String, String> ();
 			String prefix = forecast.path.substring(0, forecast.path.length() - 4) + "-";
@@ -70,6 +86,27 @@ public class Processor {
 		} catch (IOException ex) {
 			throw new ImageProcessingException("IOException: " + ex.getMessage());
 		}
+	}
+	
+	/**
+	 * Extracts 6 diagrams from meteogram fetched from new.meteo.pl/um
+	 * For every diagram it adds the legend with time (in CEST)
+	 * 
+	 * @param forecast
+	 * @param types
+	 * @return HashMap where keys are types of diagrams and values are files where diagrams are located
+	 * @throws ImageProcessingException
+	 */	
+	public HashMap<String, String> extractDiagrams(Forecast forecast) throws ImageProcessingException {
+		
+		ArrayList<String> types = new ArrayList<String>();
+		types.add(Forecast.TEMPERATURE);
+		types.add(Forecast.RAIN);
+		types.add(Forecast.PRESSURE);
+		types.add(Forecast.WIND);
+		types.add(Forecast.VISIBILITY);
+		types.add(Forecast.CLOUDS);
+		return extractDiagrams(forecast, types);
 	}
 
 	/**

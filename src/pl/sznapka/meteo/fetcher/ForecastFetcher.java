@@ -1,5 +1,6 @@
 package pl.sznapka.meteo.fetcher;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,11 +16,14 @@ public class ForecastFetcher implements IFetcher {
 	
 	protected City city;
 	protected HttpClient client;
+	protected String date;
+	protected File baseDir;
 	
-	public ForecastFetcher(City city, HttpClient client) {
+	public ForecastFetcher(City city, HttpClient client, File baseDir) {
 		
 		this.city = city;
 		this.client = client;
+		this.baseDir = baseDir;
 	}
 	
 	@Override
@@ -27,9 +31,11 @@ public class ForecastFetcher implements IFetcher {
 
 		try {
 			URL url = getMeteogramUrl();
-			String path = System.getProperty("java.io.tmpdir") + "/meteo-" + city.id + ".png";
-			client.downloadFile(url, path);
-
+			String path = baseDir.getAbsolutePath() + "/meteo-" + city.id + "-" + date + ".png";
+			File output = new File(path);
+			if (!output.exists()) {
+				client.downloadFile(url, path);
+			}
 			ArrayList<Forecast> result = new ArrayList<Forecast>();
 			result.add(new Forecast(url.toString(), city, path));
 			
@@ -43,7 +49,7 @@ public class ForecastFetcher implements IFetcher {
 
 		try {
 			String content = client.makeGetRequest(new URL("http://new.meteo.pl/um/php/meteorogram_id_um.php?ntype=0u&id=" + city.id));
-			String date = getMeteogramParam(content, "fcstdate");
+			date = getMeteogramParam(content, "fcstdate");
 			String url = "http://new.meteo.pl/um/metco/mgram_pict.php?ntype=0u&lang=pl&fdate=" + date;
 			url += "&row=" + getMeteogramParam(content, "act_y") + "&col="  + getMeteogramParam(content, "act_x");
 			System.out.println("Meteogram url: " + url);

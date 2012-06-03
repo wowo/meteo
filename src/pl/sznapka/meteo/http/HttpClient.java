@@ -2,14 +2,14 @@ package pl.sznapka.meteo.http;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.http.util.ByteArrayBuffer;
 
 public class HttpClient {
 	
@@ -55,16 +55,23 @@ public class HttpClient {
 	public void downloadFile(URL url, String outputPath) throws HttpClientException {
 		
 		try {
-	        java.io.InputStream is = url.openConnection().getInputStream();
-	        BufferedInputStream bis = new BufferedInputStream(is);
-	        ByteArrayBuffer baf = new ByteArrayBuffer(50);
-	        int current = 0;
-	        while ((current = bis.read()) != -1) {
-	                baf.append((byte) current);
-	        }	
-	        FileOutputStream fos = new FileOutputStream(new File(outputPath));
-	        fos.write(baf.toByteArray());
-	        fos.close();
+	        URLConnection connection = url.openConnection();
+	        connection.connect();
+	        int fileLength = connection.getContentLength();
+	        System.out.println("Downloading file to output path: " + outputPath + " content length: " + fileLength);
+	        InputStream input   = new BufferedInputStream(url.openStream());
+	        OutputStream output = new FileOutputStream(outputPath);
+	        
+	        byte data[] = new byte[1024];
+	        long total = 0;
+	        int count;
+	        while ((count = input.read(data)) != -1) {
+                total += count;
+                output.write(data, 0, count);
+	        }
+	        output.flush();
+	        output.close();
+	        input.close();
 		} catch (IOException e) {
 			throw new HttpClientException("An IO exception occured while downloading file: " + e.getMessage());
 		}

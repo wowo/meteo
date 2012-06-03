@@ -1,5 +1,6 @@
 package pl.sznapka.meteo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,7 +19,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 
-		ForecastFetcher fetcher = new ForecastFetcher(new City(797, "Orzesze"), new HttpClient());
+		ForecastFetcher fetcher = new ForecastFetcher(new City(797, "Orzesze"),
+				new HttpClient(), new File(System.getProperty("java.io.tmpdir")));
 		ArrayList<Forecast> result = fetcher.fetch();
 		Forecast current = result.get(0);
 		System.out.println("Fetched img: " + current.path);
