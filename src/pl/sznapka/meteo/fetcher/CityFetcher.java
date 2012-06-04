@@ -39,7 +39,7 @@ public class CityFetcher implements IFetcher {
 		Matcher matcher = Pattern.compile("show_mgram\\(([0-9]+)\\)'>([^<]+)<").matcher(content);
 		ArrayList<City> cities = new ArrayList<City>();
 		while (matcher.find()) {
-			cities.add(new City(Integer.parseInt(matcher.group(1)), matcher.group(2)));
+			cities.add(new City(Integer.parseInt(matcher.group(1)), matcher.group(2), state));
 		}
 		return cities;
 	}

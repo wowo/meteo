@@ -25,7 +25,7 @@ public class CityFetcherTest {
 			ArrayList<City> cities = fetcher.fetch();
 			assertTrue(cities.size() > 0);
 			
-			City orzesze = new City(797, "Orzesze, pow. mikołowski");
+			City orzesze = new City(797, "Orzesze, pow. mikołowski", new State("Śląskie", "SL"));
 			boolean hasOrzesze = false;
 			for (City city : cities) {
 				if (city.id == orzesze.id && city.name.equals(orzesze.name)) {
